@@ -82,6 +82,9 @@ pip
 setuptools
 wheel
 matplotlib
+kafka-python
+pandas
+plotly
 
 # Easy logging for monitoring code execution
 loguru
