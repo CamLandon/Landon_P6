@@ -55,3 +55,4 @@ def generate_dnd_event():
             "event_type": "dice_roll",
             "dice_type": dice_type,
             "roll_result": roll_res
+        }
