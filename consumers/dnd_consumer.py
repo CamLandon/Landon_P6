@@ -66,26 +66,37 @@ def plot_encounter_and_spell_trend():
     Generates a combined line chart showing monster encounters and spell usage.
     """
     plt.figure(figsize=(8, 5))
+    
+    plotted_something = False  # Track if anything was plotted
 
     # Plot monster encounters
     if encounter_counts:
         monsters = list(encounter_counts.keys())
         monster_frequencies = list(encounter_counts.values())
-        plt.plot(monsters, monster_frequencies, marker="o", linestyle="-", label="Monster Encounters", color="red")
+        if monsters:  # Ensure there's data
+            plt.plot(monsters, monster_frequencies, marker="o", linestyle="-", label="Monster Encounters", color="red")
+            plotted_something = True
 
     # Plot spell usage
     if spell_cast_counts:
         spells = list(spell_cast_counts.keys())
         spell_frequencies = list(spell_cast_counts.values())
-        plt.plot(spells, spell_frequencies, marker="o", linestyle="-", label="Spell Usage", color="blue")
+        if spells:  # Ensure there's data
+            plt.plot(spells, spell_frequencies, marker="o", linestyle="-", label="Spell Usage", color="blue")
+            plotted_something = True
 
     plt.xlabel("Event Type")
     plt.ylabel("Frequency")
     plt.title("Monster Encounters & Spell Usage Trends")
     plt.xticks(rotation=45)
-    plt.legend()
+
+    # Only show legend if something was plotted
+    if plotted_something:
+        plt.legend()
+    
     plt.grid()
     plt.show()
+
 
 
 #####################################
