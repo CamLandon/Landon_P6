@@ -4,8 +4,10 @@ dnd_consumer.py
 Consumes Dungeons & Dragons event messages from a Kafka topic, processes them, 
 and generates real-time visualizations.
 
-Visualization Types:
-- Spell Cast & Monster Encounters: Combined Line Chart
+Visualization:
+- A continuously updating line chart that displays both:
+  1. Monster Encounter Trends
+  2. Spell Usage Trends
 """
 
 #####################################
@@ -57,23 +59,24 @@ def process_message(message):
 
 
 #####################################
-# Define Combined Visualization Function
+# Define Continuous Visualization Function
 #####################################
 
 
 def plot_encounter_and_spell_trend():
     """
-    Generates a combined line chart showing monster encounters and spell usage.
+    Generates a continuously updating line chart for monster encounters and spell usage.
     """
-    plt.figure(figsize=(8, 5))
-    
+    plt.ion()  # Enable interactive mode
+    plt.clf()  # Clear previous plot
+
     plotted_something = False  # Track if anything was plotted
 
     # Plot monster encounters
     if encounter_counts:
         monsters = list(encounter_counts.keys())
         monster_frequencies = list(encounter_counts.values())
-        if monsters:  # Ensure there's data
+        if monsters:
             plt.plot(monsters, monster_frequencies, marker="o", linestyle="-", label="Monster Encounters", color="red")
             plotted_something = True
 
@@ -81,7 +84,7 @@ def plot_encounter_and_spell_trend():
     if spell_cast_counts:
         spells = list(spell_cast_counts.keys())
         spell_frequencies = list(spell_cast_counts.values())
-        if spells:  # Ensure there's data
+        if spells:
             plt.plot(spells, spell_frequencies, marker="o", linestyle="-", label="Spell Usage", color="blue")
             plotted_something = True
 
@@ -90,13 +93,12 @@ def plot_encounter_and_spell_trend():
     plt.title("Monster Encounters & Spell Usage Trends")
     plt.xticks(rotation=45)
 
-    # Only show legend if something was plotted
     if plotted_something:
         plt.legend()
-    
-    plt.grid()
-    plt.show()
 
+    plt.grid()
+    plt.draw()
+    plt.pause(0.1)  # Allow real-time updating without blocking execution
 
 
 #####################################
@@ -108,7 +110,7 @@ def consume_events():
     """
     Kafka Consumer that continuously reads messages from the topic and updates visuals.
     """
-    print("📊 Starting D&D Consumer with Visualization...")
+    print("📊 Starting D&D Consumer with Real-Time Visualization...")
 
     kafka_server = config.get_kafka_broker_address()
     topic = config.get_kafka_topic()
@@ -133,7 +135,7 @@ def consume_events():
             time.sleep(config.get_message_interval_seconds_as_int())
 
             # Generate visualization every 2 messages
-            if message_count % 1 == 0:
+            if message_count % 2 == 0:
                 print("📊 Updating visualization...")
                 plot_encounter_and_spell_trend()
 
