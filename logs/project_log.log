@@ -4771,3 +4771,6 @@
 2025-02-25 23:16:43.492 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:65 - MESSAGE_INTERVAL_SECONDS: 5
 2025-02-25 23:16:56.759 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:65 - MESSAGE_INTERVAL_SECONDS: 5
 2025-02-25 23:19:31.446 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:65 - MESSAGE_INTERVAL_SECONDS: 5
+2025-02-25 23:20:15.366 | INFO     | utils.utils_logger:<module>:43 - Logging to file: logs\project_log.log
+2025-02-25 23:20:15.368 | INFO     | utils.utils_config:get_kafka_broker_address:51 - KAFKA_BROKER_ADDRESS: localhost:9092
+2025-02-25 23:20:15.368 | INFO     | utils.utils_config:get_kafka_topic:58 - BUZZ_TOPIC: buzzline
