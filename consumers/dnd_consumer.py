@@ -5,9 +5,7 @@ Consumes Dungeons & Dragons event messages from a Kafka topic, processes them,
 and generates real-time visualizations.
 
 Visualization Types:
-- Dice Roll Distribution: Bar Chart
-- Encounter Frequency: Line Chart
-- Spell Usage: Bar Chart
+- Spell Cast & Monster Encounters: Combined Line Chart
 """
 
 #####################################
@@ -28,7 +26,6 @@ import utils.utils_config as config
 #####################################
 
 # Store aggregated event data
-dice_roll_counts = defaultdict(lambda: defaultdict(int))  # {dice_type: {roll_result: count}}
 encounter_counts = defaultdict(int)  # {monster_type: count}
 spell_cast_counts = defaultdict(int)  # {spell_name: count}
 recent_events = deque(maxlen=20)  # Store the last 20 events
@@ -42,17 +39,12 @@ def process_message(message):
     """
     Process incoming Kafka messages and update visualization data.
     """
-    global dice_roll_counts, encounter_counts, spell_cast_counts, recent_events
+    global encounter_counts, spell_cast_counts, recent_events
 
     event = message.value  # Kafka consumer already deserializes JSON
     event_type = event.get("event_type")
 
-    if event_type == "dice_roll":
-        dice_type = event.get("dice_type")
-        roll_result = event.get("roll_result")
-        dice_roll_counts[dice_type][roll_result] += 1
-
-    elif event_type == "encounter":
+    if event_type == "encounter":
         monster_type = event.get("monster_type")
         encounter_counts[monster_type] += 1
 
@@ -65,60 +57,34 @@ def process_message(message):
 
 
 #####################################
-# Define Visualization Functions
+# Define Combined Visualization Function
 #####################################
 
 
-def plot_dice_roll_distribution():
+def plot_encounter_and_spell_trend():
     """
-    Generates a bar chart showing dice roll distributions.
+    Generates a combined line chart showing monster encounters and spell usage.
     """
     plt.figure(figsize=(8, 5))
-    for dice_type, rolls in dice_roll_counts.items():
-        rolls_sorted = sorted(rolls.items())  # Sort by roll result
-        roll_values = [r[0] for r in rolls_sorted]
-        roll_counts = [r[1] for r in rolls_sorted]
-        plt.bar(roll_values, roll_counts, label=dice_type)
 
-    plt.xlabel("Dice Roll Result")
+    # Plot monster encounters
+    if encounter_counts:
+        monsters = list(encounter_counts.keys())
+        monster_frequencies = list(encounter_counts.values())
+        plt.plot(monsters, monster_frequencies, marker="o", linestyle="-", label="Monster Encounters", color="red")
+
+    # Plot spell usage
+    if spell_cast_counts:
+        spells = list(spell_cast_counts.keys())
+        spell_frequencies = list(spell_cast_counts.values())
+        plt.plot(spells, spell_frequencies, marker="o", linestyle="-", label="Spell Usage", color="blue")
+
+    plt.xlabel("Event Type")
     plt.ylabel("Frequency")
-    plt.title("Dice Roll Distribution")
+    plt.title("Monster Encounters & Spell Usage Trends")
+    plt.xticks(rotation=45)
     plt.legend()
-    plt.show()
-
-
-def plot_encounter_trend():
-    """
-    Generates a line chart showing how often each monster type appears.
-    """
-    plt.figure(figsize=(8, 5))
-    monster_names = list(encounter_counts.keys())
-    encounter_frequencies = list(encounter_counts.values())
-
-    plt.plot(monster_names, encounter_frequencies, marker="o", linestyle="-")
-
-    plt.xlabel("Monster Type")
-    plt.ylabel("Encounter Frequency")
-    plt.title("Encounter Trends")
-    plt.xticks(rotation=45)
     plt.grid()
-    plt.show()
-
-
-def plot_spell_usage():
-    """
-    Generates a bar chart showing spell usage counts.
-    """
-    plt.figure(figsize=(8, 5))
-    spell_names = list(spell_cast_counts.keys())
-    spell_frequencies = list(spell_cast_counts.values())
-
-    plt.bar(spell_names, spell_frequencies, color="purple")
-
-    plt.xlabel("Spell Name")
-    plt.ylabel("Usage Count")
-    plt.title("Spell Usage Frequency")
-    plt.xticks(rotation=45)
     plt.show()
 
 
@@ -155,12 +121,10 @@ def consume_events():
             message_count += 1
             time.sleep(config.get_message_interval_seconds_as_int())
 
-            # Generate visualizations every 2 messages
-            if message_count % 2 == 0:
-                print("📊 Updating visualizations...")
-                plot_dice_roll_distribution()
-                plot_encounter_trend()
-                plot_spell_usage()
+            # Generate visualization every 2 messages
+            if message_count % 1 == 0:
+                print("📊 Updating visualization...")
+                plot_encounter_and_spell_trend()
 
     except KeyboardInterrupt:
         print("⚠️ Consumer interrupted by user. Shutting down...")
