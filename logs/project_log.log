@@ -4720,3 +4720,19 @@
 2025-02-25 22:54:32.984 | INFO     | utils.utils_logger:<module>:43 - Logging to file: logs\project_log.log
 2025-02-25 22:54:32.985 | INFO     | utils.utils_config:get_kafka_broker_address:51 - KAFKA_BROKER_ADDRESS: Localhost:9092
 2025-02-25 22:54:32.986 | INFO     | utils.utils_config:get_kafka_topic:58 - BUZZ_TOPIC: buzzline
+2025-02-25 22:57:27.405 | INFO     | utils.utils_logger:<module>:43 - Logging to file: logs\project_log.log
+2025-02-25 22:57:27.406 | INFO     | utils.utils_config:get_kafka_broker_address:51 - KAFKA_BROKER_ADDRESS: Localhost:9092
+2025-02-25 22:57:27.407 | INFO     | utils.utils_config:get_kafka_topic:58 - BUZZ_TOPIC: buzzline
+2025-02-25 22:57:27.897 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:65 - MESSAGE_INTERVAL_SECONDS: 5
+2025-02-25 22:57:32.901 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:65 - MESSAGE_INTERVAL_SECONDS: 5
+2025-02-25 22:57:37.905 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:65 - MESSAGE_INTERVAL_SECONDS: 5
+2025-02-25 22:57:42.908 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:65 - MESSAGE_INTERVAL_SECONDS: 5
+2025-02-25 22:57:47.910 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:65 - MESSAGE_INTERVAL_SECONDS: 5
+2025-02-25 22:57:52.913 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:65 - MESSAGE_INTERVAL_SECONDS: 5
+2025-02-25 22:57:57.916 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:65 - MESSAGE_INTERVAL_SECONDS: 5
+2025-02-25 22:58:02.918 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:65 - MESSAGE_INTERVAL_SECONDS: 5
+2025-02-25 22:58:07.921 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:65 - MESSAGE_INTERVAL_SECONDS: 5
+2025-02-25 22:58:12.924 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:65 - MESSAGE_INTERVAL_SECONDS: 5
+2025-02-25 22:58:17.926 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:65 - MESSAGE_INTERVAL_SECONDS: 5
+2025-02-25 22:58:22.929 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:65 - MESSAGE_INTERVAL_SECONDS: 5
+2025-02-25 22:58:27.930 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:65 - MESSAGE_INTERVAL_SECONDS: 5
