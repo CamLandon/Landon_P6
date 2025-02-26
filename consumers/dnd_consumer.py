@@ -2,19 +2,12 @@
 dnd_consumer.py
 
 Consumes Dungeons & Dragons event messages from a Kafka topic, processes them, 
-and prepares them for analysis.
+and generates real-time visualizations.
 
-Example JSON message received:
-{
-    "timestamp": "2025-02-24T20:30:00Z",
-    "player": "Stravos",
-    "event_type": "dice_roll",
-    "dice_type": "d20",
-    "roll_result": 15,
-    "context": "attack_roll"
-}
-
-Configuration is stored in utils.utils_config.py.
+Visualization Types:
+- Dice Roll Distribution: Bar Chart
+- Encounter Frequency: Line Chart
+- Spell Usage: Bar Chart
 """
 
 #####################################
@@ -23,6 +16,7 @@ Configuration is stored in utils.utils_config.py.
 
 import json
 import time
+import matplotlib.pyplot as plt
 from collections import defaultdict, deque
 from kafka import KafkaConsumer
 
@@ -46,34 +40,86 @@ recent_events = deque(maxlen=20)  # Store the last 20 events
 
 def process_message(message):
     """
-    Process incoming Kafka messages based on event type.
+    Process incoming Kafka messages and update visualization data.
     """
     global dice_roll_counts, encounter_counts, spell_cast_counts, recent_events
 
-    event = message.value  # Remove json.loads() since it's already a dictionary
+    event = message.value  # Kafka consumer already deserializes JSON
     event_type = event.get("event_type")
 
     if event_type == "dice_roll":
         dice_type = event.get("dice_type")
         roll_result = event.get("roll_result")
-        if dice_type in config.DICE_TYPES:
-            dice_roll_counts[dice_type][roll_result] += 1  # ✅ Matches updated structure
+        dice_roll_counts[dice_type][roll_result] += 1
 
     elif event_type == "encounter":
         monster_type = event.get("monster_type")
-        if monster_type in config.MONSTERS:
-            encounter_counts[monster_type] += 1  # ✅ Matches updated structure
+        encounter_counts[monster_type] += 1
 
     elif event_type == "spell_cast":
         spell_name = event.get("spell_name")
-        if spell_name in config.SPELLS:
-            spell_cast_counts[spell_name] += 1  # ✅ Matches updated structure
+        spell_cast_counts[spell_name] += 1
 
     # Store recent events
     recent_events.append(event)
 
-    # Print the event for debugging
-    print(f"✅ Processed Event: {event}")
+
+#####################################
+# Define Visualization Functions
+#####################################
+
+
+def plot_dice_roll_distribution():
+    """
+    Generates a bar chart showing dice roll distributions.
+    """
+    plt.figure(figsize=(8, 5))
+    for dice_type, rolls in dice_roll_counts.items():
+        rolls_sorted = sorted(rolls.items())  # Sort by roll result
+        roll_values = [r[0] for r in rolls_sorted]
+        roll_counts = [r[1] for r in rolls_sorted]
+        plt.bar(roll_values, roll_counts, label=dice_type)
+
+    plt.xlabel("Dice Roll Result")
+    plt.ylabel("Frequency")
+    plt.title("Dice Roll Distribution")
+    plt.legend()
+    plt.show()
+
+
+def plot_encounter_trend():
+    """
+    Generates a line chart showing how often each monster type appears.
+    """
+    plt.figure(figsize=(8, 5))
+    monster_names = list(encounter_counts.keys())
+    encounter_frequencies = list(encounter_counts.values())
+
+    plt.plot(monster_names, encounter_frequencies, marker="o", linestyle="-")
+
+    plt.xlabel("Monster Type")
+    plt.ylabel("Encounter Frequency")
+    plt.title("Encounter Trends")
+    plt.xticks(rotation=45)
+    plt.grid()
+    plt.show()
+
+
+def plot_spell_usage():
+    """
+    Generates a bar chart showing spell usage counts.
+    """
+    plt.figure(figsize=(8, 5))
+    spell_names = list(spell_cast_counts.keys())
+    spell_frequencies = list(spell_cast_counts.values())
+
+    plt.bar(spell_names, spell_frequencies, color="purple")
+
+    plt.xlabel("Spell Name")
+    plt.ylabel("Usage Count")
+    plt.title("Spell Usage Frequency")
+    plt.xticks(rotation=45)
+    plt.show()
 
 
 #####################################
@@ -83,15 +129,13 @@ def process_message(message):
 
 def consume_events():
     """
-    Kafka Consumer that continuously reads messages from the topic.
+    Kafka Consumer that continuously reads messages from the topic and updates visuals.
     """
-    print("Starting D&D Kafka Consumer...")
+    print("📊 Starting D&D Consumer with Visualization...")
 
-    # Load Kafka configurations
     kafka_server = config.get_kafka_broker_address()
     topic = config.get_kafka_topic()
 
-    # Initialize Kafka Consumer
     consumer = KafkaConsumer(
         topic,
         bootstrap_servers=kafka_server,
@@ -103,10 +147,20 @@ def consume_events():
 
     print(f"✅ Subscribed to Kafka topic: {topic}")
 
+    message_count = 0  # Counter to track processed messages
+
     try:
         for message in consumer:
             process_message(message)
-            time.sleep(config.get_message_interval_seconds_as_int())  # Controlled processing interval
+            message_count += 1
+            time.sleep(config.get_message_interval_seconds_as_int())
+
+            # Generate visualizations every 2 messages
+            if message_count % 2 == 0:
+                print("📊 Updating visualizations...")
+                plot_dice_roll_distribution()
+                plot_encounter_trend()
+                plot_spell_usage()
 
     except KeyboardInterrupt:
         print("⚠️ Consumer interrupted by user. Shutting down...")
