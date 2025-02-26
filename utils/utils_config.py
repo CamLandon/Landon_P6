@@ -159,6 +159,25 @@ def get_mongodb_collection() -> str:
     logger.info(f"MONGODB_COLLECTION: {collection}")
     return collection
 
+#####################################
+# Defining EVENT_TYPES
+#####################################
+
+# Define valid event types
+EVENT_TYPES = ["dice_roll", "encounter", "spell_cast"]
+
+# Define valid dice types
+DICE_TYPES = ["d4", "d6", "d8", "d10", "d12", "d20"]
+
+# Define player names (Example list, update as needed)
+PLAYERS = ["Stravos", "Ya", "Sylas", "Wurs"]
+
+# Define monster types
+MONSTERS = ["Goblin", "Orc", "Dragon", "Beholder"]
+
+# Define spell names
+SPELLS = ["Fireball", "Shield", "Magic Missile", "Cure Wounds"]
+
 
 #####################################
 # Conditional Execution

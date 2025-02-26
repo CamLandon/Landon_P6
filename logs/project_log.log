@@ -4709,3 +4709,7 @@
 2025-02-24 20:00:22.736 | INFO     | __main__:main:198 - Kafka producer closed.
 2025-02-24 20:00:22.737 | INFO     | __main__:main:199 - TRY/FINALLY: Producer shutting down.
 2025-02-25 22:41:23.284 | INFO     | utils.utils_logger:<module>:43 - Logging to file: logs\project_log.log
+2025-02-25 22:45:23.472 | INFO     | utils.utils_logger:<module>:43 - Logging to file: logs\project_log.log
+2025-02-25 22:45:23.474 | INFO     | utils.utils_config:get_kafka_broker_address:51 - KAFKA_BROKER_ADDRESS: Localhost:9092
+2025-02-25 22:45:23.475 | INFO     | utils.utils_config:get_kafka_topic:58 - BUZZ_TOPIC: buzzline
+2025-02-25 22:45:23.475 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:65 - MESSAGE_INTERVAL_SECONDS: 5
