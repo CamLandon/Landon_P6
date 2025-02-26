@@ -14,7 +14,7 @@ Example JSON message received:
     "context": "attack_roll"
 }
 
-Configuration is stored in utils/config.py.
+Configuration is stored in utils.utils_config.py.
 """
 
 #####################################
@@ -25,7 +25,9 @@ import json
 import time
 from collections import defaultdict, deque
 from kafka import KafkaConsumer
-import utils.config as config
+
+# Import local config module
+import utils.utils_config as config
 
 #####################################
 # Initialize Data Storage
@@ -48,27 +50,30 @@ def process_message(message):
     """
     global dice_roll_counts, encounter_counts, spell_cast_counts, recent_events
 
-    event = json.loads(message.value)
+    event = message.value  # Remove json.loads() since it's already a dictionary
     event_type = event.get("event_type")
 
     if event_type == "dice_roll":
         dice_type = event.get("dice_type")
         roll_result = event.get("roll_result")
-        dice_roll_counts[dice_type][roll_result] += 1
+        if dice_type in config.DICE_TYPES:
+            dice_roll_counts[dice_type][roll_result] += 1  # ✅ Matches updated structure
 
     elif event_type == "encounter":
         monster_type = event.get("monster_type")
-        encounter_counts[monster_type] += 1
+        if monster_type in config.MONSTERS:
+            encounter_counts[monster_type] += 1  # ✅ Matches updated structure
 
     elif event_type == "spell_cast":
         spell_name = event.get("spell_name")
-        spell_cast_counts[spell_name] += 1
+        if spell_name in config.SPELLS:
+            spell_cast_counts[spell_name] += 1  # ✅ Matches updated structure
 
     # Store recent events
     recent_events.append(event)
 
     # Print the event for debugging
-    print(f"Processed Event: {event}")
+    print(f"✅ Processed Event: {event}")
 
 
 #####################################
@@ -82,28 +87,32 @@ def consume_events():
     """
     print("Starting D&D Kafka Consumer...")
 
+    # Load Kafka configurations
+    kafka_server = config.get_kafka_broker_address()
+    topic = config.get_kafka_topic()
+
     # Initialize Kafka Consumer
     consumer = KafkaConsumer(
-        config.TOPIC,
-        bootstrap_servers=config.KAFKA_BROKER,
+        topic,
+        bootstrap_servers=kafka_server,
         value_deserializer=lambda x: json.loads(x.decode("utf-8")),
         auto_offset_reset="earliest",
         enable_auto_commit=True,
         group_id="dnd_consumer_group",
     )
 
-    print(f"Subscribed to Kafka topic: {config.TOPIC}")
+    print(f"✅ Subscribed to Kafka topic: {topic}")
 
     try:
         for message in consumer:
             process_message(message)
-            time.sleep(config.PROCESS_INTERVAL)  # Simulate processing time
+            time.sleep(config.get_message_interval_seconds_as_int())  # Controlled processing interval
 
     except KeyboardInterrupt:
-        print("Consumer interrupted by user. Shutting down...")
+        print("⚠️ Consumer interrupted by user. Shutting down...")
     finally:
         consumer.close()
-        print("Kafka Consumer closed.")
+        print("🛑 Kafka Consumer closed.")
 
 
 #####################################
