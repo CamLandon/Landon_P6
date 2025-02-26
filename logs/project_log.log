@@ -4708,3 +4708,4 @@
 2025-02-24 20:00:22.732 | WARNING  | __main__:main:192 - WARNING: Producer interrupted by user.
 2025-02-24 20:00:22.736 | INFO     | __main__:main:198 - Kafka producer closed.
 2025-02-24 20:00:22.737 | INFO     | __main__:main:199 - TRY/FINALLY: Producer shutting down.
+2025-02-25 22:41:23.284 | INFO     | utils.utils_logger:<module>:43 - Logging to file: logs\project_log.log
