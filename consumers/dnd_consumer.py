@@ -23,6 +23,7 @@ Configuration is stored in utils.utils_config.py.
 
 import json
 import time
+import matplotlib.pyplot as plt
 from collections import defaultdict, deque
 from kafka import KafkaConsumer
 
@@ -33,11 +34,43 @@ import utils.utils_config as config
 # Initialize Data Storage
 #####################################
 
-# Store aggregated event data
-dice_roll_counts = defaultdict(lambda: defaultdict(int))  # {dice_type: {roll_result: count}}
-encounter_counts = defaultdict(int)  # {monster_type: count}
-spell_cast_counts = defaultdict(int)  # {spell_name: count}
+# Store aggregated event data per player
+player_stats = defaultdict(lambda: {
+    "dice_rolls": defaultdict(int),
+    "encounters": defaultdict(int),
+    "spells_cast": defaultdict(int),
+})
 recent_events = deque(maxlen=20)  # Store the last 20 events
+
+#####################################
+# Define Visualization Function
+#####################################
+
+def plot_player_statistics():
+    """Generate a bar chart for each player's statistics."""
+    for player, stats in player_stats.items():
+        fig, axs = plt.subplots(1, 3, figsize=(15, 5))
+        fig.suptitle(f"Statistics for {player}")
+
+        # Dice Rolls
+        axs[0].bar(stats["dice_rolls"].keys(), stats["dice_rolls"].values())
+        axs[0].set_title("Dice Rolls")
+        axs[0].set_xlabel("Dice Type")
+        axs[0].set_ylabel("Count")
+
+        # Encounters
+        axs[1].bar(stats["encounters"].keys(), stats["encounters"].values())
+        axs[1].set_title("Encounters")
+        axs[1].set_xlabel("Monster Type")
+        axs[1].set_ylabel("Count")
+
+        # Spells Cast
+        axs[2].bar(stats["spells_cast"].keys(), stats["spells_cast"].values())
+        axs[2].set_title("Spells Cast")
+        axs[2].set_xlabel("Spell Name")
+        axs[2].set_ylabel("Count")
+
+        plt.show()
 
 #####################################
 # Define Message Processing Function
@@ -47,7 +80,7 @@ def process_message(message):
     """
     Process incoming Kafka messages based on event type.
     """
-    global dice_roll_counts, encounter_counts, spell_cast_counts, recent_events
+    global player_stats, recent_events
 
     event = message.value  # Remove json.loads() since it's already a dictionary
     event_type = event.get("event_type")
@@ -58,14 +91,14 @@ def process_message(message):
         roll_result = event.get("roll_result")
         context = event.get("context")
         if dice_type in config.DICE_TYPES:
-            dice_roll_counts[dice_type][roll_result] += 1
+            player_stats[player]["dice_rolls"][dice_type] += 1
             print(f"🎲 {player} rolled a {roll_result} on a {dice_type} for a {context}.")
 
     elif event_type == "encounter":
         monster_type = event.get("monster_type")
         location = event.get("location")
         if monster_type in config.MONSTERS:
-            encounter_counts[monster_type] += 1
+            player_stats[player]["encounters"][monster_type] += 1
             print(f"⚔️ {player} encountered a {monster_type} in the {location}!")
 
     elif event_type == "spell_cast":
@@ -73,7 +106,7 @@ def process_message(message):
         target = event.get("target")
         effect = event.get("effect")
         if spell_name in config.SPELLS:
-            spell_cast_counts[spell_name] += 1
+            player_stats[player]["spells_cast"][spell_name] += 1
             if target == "enemy" and effect in ["damage", "debuff"]:
                 print(f"✨ {player} cast {spell_name} on an enemy, causing {effect}.")
             elif target == "ally" and effect in ["heal", "buff"]:
@@ -118,6 +151,7 @@ def consume_events():
         for message in consumer:
             process_message(message)
             time.sleep(config.get_message_interval_seconds_as_int())  # Controlled processing interval
+            plot_player_statistics()  # Visualize after processing each message
 
     except KeyboardInterrupt:
         print("⚠️ Consumer interrupted by user. Shutting down...")
