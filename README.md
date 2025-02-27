@@ -1,6 +1,6 @@
 # D&D Kafka Event Tracker
 
-A real-time **Dungeons & Dragons event tracking system** using Kafka to **stream, process, and visualize** game events such as **dice rolls, monster encounters, and spell casts**.
+The dnd_consumer.py script listens to the Kafka topic (dnd_events), processes incoming D&D game events, and updates real-time visualizations for tracked players. It categorizes events into dice rolls, encounters, and spell casts, maintaining a summary of each player's activity. The visualization refreshes every 5 messages, ensuring an up-to-date view of in-game events.
 
 ## 🚀 Features
 - 🛠️ **Kafka-based event streaming**
