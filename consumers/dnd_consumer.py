@@ -89,7 +89,7 @@ def consume_events():
 
     # Load Kafka configurations
     kafka_server = config.get_kafka_broker_address()
-    topic = config.get_kafka_topic()
+    topic = config.get_kafka_topic()  # Now retrieves "dnd_events"
 
     # Initialize Kafka Consumer
     consumer = KafkaConsumer(

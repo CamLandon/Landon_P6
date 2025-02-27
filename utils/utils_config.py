@@ -52,15 +52,15 @@ def get_kafka_broker_address() -> str:
 
 
 def get_kafka_topic() -> str:
-    """Fetch BUZZ_TOPIC from environment or use default."""
-    topic = os.getenv("BUZZ_TOPIC", "buzzline")
-    logger.info(f"BUZZ_TOPIC: {topic}")
+    """Fetch DND_TOPIC from environment or use default."""
+    topic = os.getenv("DND_TOPIC", "dnd_events")
+    logger.info(f"DND_TOPIC: {topic}")
     return topic
 
 
 def get_message_interval_seconds_as_int() -> int:
     """Fetch MESSAGE_INTERVAL_SECONDS from environment or use default."""
-    interval = int(os.getenv("MESSAGE_INTERVAL_SECONDS", 5))
+    interval = int(os.getenv("MESSAGE_INTERVAL_SECONDS", 2))
     logger.info(f"MESSAGE_INTERVAL_SECONDS: {interval}")
     return interval
 

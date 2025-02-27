@@ -90,7 +90,7 @@ def main():
 
     # Load Kafka Configurations
     kafka_server = config.get_kafka_broker_address()  # ✅ Updated to match utils_config.py
-    topic = config.get_kafka_topic()  # ✅ Updated
+    topic = config.get_kafka_topic()  # Now retrieves "dnd_events"
     event_frequency = config.get_message_interval_seconds_as_int()  # ✅ Updated
 
     # Initialize Kafka Producer
