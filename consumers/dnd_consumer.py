@@ -50,11 +50,12 @@ message_count = 0  # Track processed messages
 #####################################
 
 def plot_event_summary():
-    """Generate separate bar charts for Stravos and Wurs."""
+    """Generate separate bar charts for Stravos and Wurs without opening new windows."""
     plt.ion()  # Enable interactive mode
-    plt.clf()  # Clear previous plot
-
-    fig, axs = plt.subplots(1, 2, figsize=(12, 5))  # Two subplots side by side
+    plt.figure(num=1, figsize=(12, 5))  # Use the same figure instead of creating new ones
+    plt.clf()  # Clear previous plots
+    
+    fig, axs = plt.subplots(1, 2, num=1)  # Ensure the figure stays the same
     fig.suptitle("D&D Event Summary for Stravos and Wurs")
 
     # Plot for Stravos
