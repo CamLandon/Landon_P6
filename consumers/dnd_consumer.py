@@ -45,13 +45,16 @@ message_count = 0  # Track processed messages
 #####################################
 
 def plot_event_summary():
-    """Generate a simple bar chart summarizing all events."""
-    plt.figure(figsize=(6, 4))
+    """Generate a simple bar chart summarizing all events without requiring window closure."""
+    plt.ion()  # Enable interactive mode
+    plt.clf()  # Clear previous plot
+
     plt.bar(event_counts.keys(), event_counts.values(), color=["blue", "red", "green"])
     plt.xlabel("Event Types")
     plt.ylabel("Total Count")
     plt.title("D&D Event Summary")
-    plt.show()
+
+    plt.pause(0.1)  # Pause briefly to allow refresh
 
 #####################################
 # Define Message Processing Function
