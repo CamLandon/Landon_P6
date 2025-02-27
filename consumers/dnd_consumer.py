@@ -42,6 +42,9 @@ player_stats = defaultdict(lambda: {
 })
 recent_events = deque(maxlen=20)  # Store the last 20 events
 
+MESSAGE_BATCH_SIZE = 5  # Update visualization every 5 messages
+message_count = 0  # Track processed messages
+
 #####################################
 # Define Visualization Function
 #####################################
@@ -129,6 +132,7 @@ def consume_events():
     """
     Kafka Consumer that continuously reads messages from the topic.
     """
+    global message_count
     print("Starting D&D Kafka Consumer...")
 
     # Load Kafka configurations
@@ -150,8 +154,10 @@ def consume_events():
     try:
         for message in consumer:
             process_message(message)
-            time.sleep(config.get_message_interval_seconds_as_int())  # Controlled processing interval
-            plot_player_statistics()  # Visualize after processing each message
+            message_count += 1
+
+            if message_count % MESSAGE_BATCH_SIZE == 0:
+                plot_player_statistics()  # Update visualization every 5 messages
 
     except KeyboardInterrupt:
         print("⚠️ Consumer interrupted by user. Shutting down...")
