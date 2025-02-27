@@ -34,12 +34,7 @@ import utils.utils_config as config
 # Initialize Data Storage
 #####################################
 
-# Store aggregated event data per player
-player_stats = defaultdict(lambda: {
-    "dice_rolls": defaultdict(int),
-    "encounters": defaultdict(int),
-    "spells_cast": defaultdict(int),
-})
+event_counts = {"dice_roll": 0, "encounter": 0, "spell_cast": 0}
 recent_events = deque(maxlen=20)  # Store the last 20 events
 
 MESSAGE_BATCH_SIZE = 5  # Update visualization every 5 messages
@@ -49,31 +44,14 @@ message_count = 0  # Track processed messages
 # Define Visualization Function
 #####################################
 
-def plot_player_statistics():
-    """Generate a bar chart for each player's statistics."""
-    for player, stats in player_stats.items():
-        fig, axs = plt.subplots(1, 3, figsize=(15, 5))
-        fig.suptitle(f"Statistics for {player}")
-
-        # Dice Rolls
-        axs[0].bar(stats["dice_rolls"].keys(), stats["dice_rolls"].values())
-        axs[0].set_title("Dice Rolls")
-        axs[0].set_xlabel("Dice Type")
-        axs[0].set_ylabel("Count")
-
-        # Encounters
-        axs[1].bar(stats["encounters"].keys(), stats["encounters"].values())
-        axs[1].set_title("Encounters")
-        axs[1].set_xlabel("Monster Type")
-        axs[1].set_ylabel("Count")
-
-        # Spells Cast
-        axs[2].bar(stats["spells_cast"].keys(), stats["spells_cast"].values())
-        axs[2].set_title("Spells Cast")
-        axs[2].set_xlabel("Spell Name")
-        axs[2].set_ylabel("Count")
-
-        plt.show()
+def plot_event_summary():
+    """Generate a simple bar chart summarizing all events."""
+    plt.figure(figsize=(6, 4))
+    plt.bar(event_counts.keys(), event_counts.values(), color=["blue", "red", "green"])
+    plt.xlabel("Event Types")
+    plt.ylabel("Total Count")
+    plt.title("D&D Event Summary")
+    plt.show()
 
 #####################################
 # Define Message Processing Function
@@ -83,46 +61,20 @@ def process_message(message):
     """
     Process incoming Kafka messages based on event type.
     """
-    global player_stats, recent_events
+    global event_counts, recent_events
 
-    event = message.value  # Remove json.loads() since it's already a dictionary
+    event = message.value  # Already a dictionary
     event_type = event.get("event_type")
     player = event.get("player")
 
-    if event_type == "dice_roll":
-        dice_type = event.get("dice_type")
-        roll_result = event.get("roll_result")
-        context = event.get("context")
-        if dice_type in config.DICE_TYPES:
-            player_stats[player]["dice_rolls"][dice_type] += 1
-            print(f"🎲 {player} rolled a {roll_result} on a {dice_type} for a {context}.")
-
-    elif event_type == "encounter":
-        monster_type = event.get("monster_type")
-        location = event.get("location")
-        if monster_type in config.MONSTERS:
-            player_stats[player]["encounters"][monster_type] += 1
-            print(f"⚔️ {player} encountered a {monster_type} in the {location}!")
-
-    elif event_type == "spell_cast":
-        spell_name = event.get("spell_name")
-        target = event.get("target")
-        effect = event.get("effect")
-        if spell_name in config.SPELLS:
-            player_stats[player]["spells_cast"][spell_name] += 1
-            if target == "enemy" and effect in ["damage", "debuff"]:
-                print(f"✨ {player} cast {spell_name} on an enemy, causing {effect}.")
-            elif target == "ally" and effect in ["heal", "buff"]:
-                print(f"🛡️ {player} cast {spell_name} on an ally, providing {effect}.")
-            elif target == "self" and effect in ["buff", "heal"]:
-                print(f"🔮 {player} cast {spell_name} on themselves, gaining {effect}.")
+    if event_type in event_counts:
+        event_counts[event_type] += 1
 
     # Store recent events
     recent_events.append(event)
 
     # Print the event for debugging
     print(f"✅ Processed Event: {event}")
-
 
 #####################################
 # Define Consumer Function
@@ -157,14 +109,13 @@ def consume_events():
             message_count += 1
 
             if message_count % MESSAGE_BATCH_SIZE == 0:
-                plot_player_statistics()  # Update visualization every 5 messages
+                plot_event_summary()  # Update visualization every 5 messages
 
     except KeyboardInterrupt:
         print("⚠️ Consumer interrupted by user. Shutting down...")
     finally:
         consumer.close()
         print("🛑 Kafka Consumer closed.")
-
 
 #####################################
 # Conditional Execution
