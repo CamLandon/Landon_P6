@@ -34,7 +34,12 @@ import utils.utils_config as config
 # Initialize Data Storage
 #####################################
 
-event_counts = {"dice_roll": 0, "encounter": 0, "spell_cast": 0}
+# Track event counts separately for Stravos and Wurs
+event_counts = {
+    "Stravos": {"dice_roll": 0, "encounter": 0, "spell_cast": 0},
+    "Wurs": {"dice_roll": 0, "encounter": 0, "spell_cast": 0},
+}
+
 recent_events = deque(maxlen=20)  # Store the last 20 events
 
 MESSAGE_BATCH_SIZE = 5  # Update visualization every 5 messages
@@ -45,14 +50,24 @@ message_count = 0  # Track processed messages
 #####################################
 
 def plot_event_summary():
-    """Generate a simple bar chart summarizing all events without requiring window closure."""
+    """Generate separate bar charts for Stravos and Wurs."""
     plt.ion()  # Enable interactive mode
     plt.clf()  # Clear previous plot
 
-    plt.bar(event_counts.keys(), event_counts.values(), color=["blue", "red", "green"])
-    plt.xlabel("Event Types")
-    plt.ylabel("Total Count")
-    plt.title("D&D Event Summary")
+    fig, axs = plt.subplots(1, 2, figsize=(12, 5))  # Two subplots side by side
+    fig.suptitle("D&D Event Summary for Stravos and Wurs")
+
+    # Plot for Stravos
+    axs[0].bar(event_counts["Stravos"].keys(), event_counts["Stravos"].values(), color=["blue", "red", "green"])
+    axs[0].set_title("Stravos")
+    axs[0].set_xlabel("Event Types")
+    axs[0].set_ylabel("Total Count")
+
+    # Plot for Wurs
+    axs[1].bar(event_counts["Wurs"].keys(), event_counts["Wurs"].values(), color=["blue", "red", "green"])
+    axs[1].set_title("Wurs")
+    axs[1].set_xlabel("Event Types")
+    axs[1].set_ylabel("Total Count")
 
     plt.pause(0.1)  # Pause briefly to allow refresh
 
@@ -70,8 +85,8 @@ def process_message(message):
     event_type = event.get("event_type")
     player = event.get("player")
 
-    if event_type in event_counts:
-        event_counts[event_type] += 1
+    if player in event_counts and event_type in event_counts[player]:
+        event_counts[player][event_type] += 1
 
     # Store recent events
     recent_events.append(event)

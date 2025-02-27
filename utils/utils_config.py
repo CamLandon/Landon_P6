@@ -1,143 +1,117 @@
 """
-dnd_consumer.py
+Config Utility
+File: utils/utils_config.py
 
-Consumes Dungeons & Dragons event messages from a Kafka topic, processes them, 
-and prepares them for analysis.
+This script provides the configuration functions for the project. 
 
-Example JSON message received:
-{
-    "timestamp": "2025-02-24T20:30:00Z",
-    "player": "Stravos",
-    "event_type": "dice_roll",
-    "dice_type": "d20",
-    "roll_result": 15,
-    "context": "attack_roll"
-}
+It centralizes the configuration management 
+by loading environment variables from .env in the root project folder
+and constructing file paths using pathlib. 
 
-Configuration is stored in utils.utils_config.py.
+If you rename any variables in .env, remember to:
+- recopy .env to .env.example (and hide the secrets)
+- update the corresponding function in this module.
 """
 
 #####################################
-# Import Modules
+# Imports
 #####################################
 
-import json
-import time
-import matplotlib.pyplot as plt
-from collections import defaultdict, deque
-from kafka import KafkaConsumer
+# import from Python Standard Library
+import os
+import pathlib
 
-# Import local config module
-import utils.utils_config as config
+# import from external packages
+from dotenv import load_dotenv
 
-#####################################
-# Initialize Data Storage
-#####################################
-
-# Track event counts separately for Stravos and Wurs
-event_counts = {
-    "Stravos": {"dice_roll": 0, "encounter": 0, "spell_cast": 0},
-    "Wurs": {"dice_roll": 0, "encounter": 0, "spell_cast": 0},
-}
-
-recent_events = deque(maxlen=20)  # Store the last 20 events
-
-MESSAGE_BATCH_SIZE = 5  # Update visualization every 5 messages
-message_count = 0  # Track processed messages
+# import from local modules
+from .utils_logger import logger
 
 #####################################
-# Define Visualization Function
+# Load Environment Variables
 #####################################
 
-def plot_event_summary():
-    """Generate separate bar charts for Stravos and Wurs."""
-    plt.ion()  # Enable interactive mode
-    plt.clf()  # Clear previous plot
-
-    fig, axs = plt.subplots(1, 2, figsize=(12, 5))  # Two subplots side by side
-    fig.suptitle("D&D Event Summary for Stravos and Wurs")
-
-    # Plot for Stravos
-    axs[0].bar(event_counts["Stravos"].keys(), event_counts["Stravos"].values(), color=["blue", "red", "green"])
-    axs[0].set_title("Stravos")
-    axs[0].set_xlabel("Event Types")
-    axs[0].set_ylabel("Total Count")
-
-    # Plot for Wurs
-    axs[1].bar(event_counts["Wurs"].keys(), event_counts["Wurs"].values(), color=["blue", "red", "green"])
-    axs[1].set_title("Wurs")
-    axs[1].set_xlabel("Event Types")
-    axs[1].set_ylabel("Total Count")
-
-    plt.pause(0.1)  # Pause briefly to allow refresh
+load_dotenv()
 
 #####################################
-# Define Message Processing Function
+# Getter Functions for .env Variables
 #####################################
 
-def process_message(message):
-    """
-    Process incoming Kafka messages based on event type.
-    """
-    global event_counts, recent_events
+def get_zookeeper_address() -> str:
+    """Fetch ZOOKEEPER_ADDRESS from environment or use default."""
+    address = os.getenv("ZOOKEEPER_ADDRESS", "localhost:2181")
+    logger.info(f"ZOOKEEPER_ADDRESS: {address}")
+    return address
 
-    event = message.value  # Already a dictionary
-    event_type = event.get("event_type")
-    player = event.get("player")
 
-    if player in event_counts and event_type in event_counts[player]:
-        event_counts[player][event_type] += 1
+def get_kafka_broker_address() -> str:
+    """Fetch KAFKA_BROKER_ADDRESS from environment or use default."""
+    address = os.getenv("KAFKA_BROKER_ADDRESS", "localhost:9092")
+    logger.info(f"KAFKA_BROKER_ADDRESS: {address}")
+    return address
 
-    # Store recent events
-    recent_events.append(event)
 
-    # Print the event for debugging
-    print(f"✅ Processed Event: {event}")
+def get_kafka_topic() -> str:
+    """Fetch DND_TOPIC from environment or use default."""
+    topic = os.getenv("DND_TOPIC", "dnd_events")
+    logger.info(f"DND_TOPIC: {topic}")
+    return topic
+
+
+def get_message_interval_seconds_as_int() -> int:
+    """Fetch MESSAGE_INTERVAL_SECONDS from environment or use default."""
+    interval = int(os.getenv("MESSAGE_INTERVAL_SECONDS", 2))
+    logger.info(f"MESSAGE_INTERVAL_SECONDS: {interval}")
+    return interval
+
+
+def get_kafka_consumer_group_id() -> str:
+    """Fetch BUZZ_CONSUMER_GROUP_ID from environment or use default."""
+    group_id = os.getenv("BUZZ_CONSUMER_GROUP_ID", "buzz_group")
+    logger.info(f"BUZZ_CONSUMER_GROUP_ID: {group_id}")
+    return group_id
+
+
+def get_base_data_path() -> pathlib.Path:
+    """Fetch BASE_DATA_DIR from environment or use default."""
+    project_root = pathlib.Path(__file__).parent.parent
+    data_dir = project_root / os.getenv("BASE_DATA_DIR", "data")
+    logger.info(f"BASE_DATA_DIR: {data_dir}")
+    return data_dir
 
 #####################################
-# Define Consumer Function
+# Defining EVENT_TYPES
 #####################################
 
-def consume_events():
-    """
-    Kafka Consumer that continuously reads messages from the topic.
-    """
-    global message_count
-    print("Starting D&D Kafka Consumer...")
+# Define valid event types
+EVENT_TYPES = ["dice_roll", "encounter", "spell_cast"]
 
-    # Load Kafka configurations
-    kafka_server = config.get_kafka_broker_address()
-    topic = config.get_kafka_topic()
+# Define valid dice types
+DICE_TYPES = ["d4", "d6", "d8", "d10", "d12", "d20"]
 
-    # Initialize Kafka Consumer
-    consumer = KafkaConsumer(
-        topic,
-        bootstrap_servers=kafka_server,
-        value_deserializer=lambda x: json.loads(x.decode("utf-8")),
-        auto_offset_reset="earliest",
-        enable_auto_commit=True,
-        group_id="dnd_consumer_group",
-    )
+# Define player names (Example list, update as needed)
+PLAYERS = ["Stravos", "Ya", "Sylas", "Wurs"]
 
-    print(f"✅ Subscribed to Kafka topic: {topic}")
+# Define monster types
+MONSTERS = ["Goblin", "Orc", "Dragon", "Beholder"]
 
-    try:
-        for message in consumer:
-            process_message(message)
-            message_count += 1
-
-            if message_count % MESSAGE_BATCH_SIZE == 0:
-                plot_event_summary()  # Update visualization every 5 messages
-
-    except KeyboardInterrupt:
-        print("⚠️ Consumer interrupted by user. Shutting down...")
-    finally:
-        consumer.close()
-        print("🛑 Kafka Consumer closed.")
+# Define spell names
+SPELLS = ["Fireball", "Shield", "Magic Missile", "Cure Wounds"]
 
 #####################################
 # Conditional Execution
 #####################################
 
 if __name__ == "__main__":
-    consume_events()
+    # Test the configuration functions
+    logger.info("Testing configuration.")
+    try:
+        get_zookeeper_address()
+        get_kafka_broker_address()
+        get_kafka_topic()
+        get_message_interval_seconds_as_int()
+        get_kafka_consumer_group_id()
+        get_base_data_path()
+        logger.info("SUCCESS: Configuration function tests complete.")
+    except Exception as e:
+        logger.error(f"ERROR: Configuration function test failed: {e}")
