@@ -4829,3 +4829,18 @@
 2025-02-27 09:34:26.423 | INFO     | utils.utils_config:get_kafka_broker_address:50 - KAFKA_BROKER_ADDRESS: localhost:9092
 2025-02-27 09:34:26.423 | INFO     | utils.utils_config:get_kafka_topic:57 - BUZZ_TOPIC: buzzline
 2025-02-27 09:34:26.423 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:64 - MESSAGE_INTERVAL_SECONDS: 5
+2025-02-27 10:28:22.757 | INFO     | utils.utils_logger:<module>:43 - Logging to file: logs\project_log.log
+2025-02-27 10:28:22.759 | INFO     | utils.utils_config:get_kafka_broker_address:50 - KAFKA_BROKER_ADDRESS: localhost:9092
+2025-02-27 10:28:22.759 | INFO     | utils.utils_config:get_kafka_topic:57 - DND_TOPIC: dnd_events
+2025-02-27 10:28:22.759 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:64 - MESSAGE_INTERVAL_SECONDS: 2
+2025-02-27 10:29:11.855 | INFO     | utils.utils_logger:<module>:43 - Logging to file: logs\project_log.log
+2025-02-27 10:29:11.856 | INFO     | utils.utils_config:get_kafka_broker_address:50 - KAFKA_BROKER_ADDRESS: localhost:9092
+2025-02-27 10:29:11.856 | INFO     | utils.utils_config:get_kafka_topic:57 - DND_TOPIC: dnd_events
+2025-02-27 10:29:14.374 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:64 - MESSAGE_INTERVAL_SECONDS: 2
+2025-02-27 10:29:16.376 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:64 - MESSAGE_INTERVAL_SECONDS: 2
+2025-02-27 10:29:18.378 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:64 - MESSAGE_INTERVAL_SECONDS: 2
+2025-02-27 10:29:20.382 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:64 - MESSAGE_INTERVAL_SECONDS: 2
+2025-02-27 10:29:22.385 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:64 - MESSAGE_INTERVAL_SECONDS: 2
+2025-02-27 10:29:24.389 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:64 - MESSAGE_INTERVAL_SECONDS: 2
+2025-02-27 10:29:26.392 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:64 - MESSAGE_INTERVAL_SECONDS: 2
+2025-02-27 10:29:28.395 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:64 - MESSAGE_INTERVAL_SECONDS: 2

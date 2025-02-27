@@ -43,7 +43,6 @@ recent_events = deque(maxlen=20)  # Store the last 20 events
 # Define Message Processing Function
 #####################################
 
-
 def process_message(message):
     """
     Process incoming Kafka messages based on event type.
@@ -52,22 +51,35 @@ def process_message(message):
 
     event = message.value  # Remove json.loads() since it's already a dictionary
     event_type = event.get("event_type")
+    player = event.get("player")
 
     if event_type == "dice_roll":
         dice_type = event.get("dice_type")
         roll_result = event.get("roll_result")
+        context = event.get("context")
         if dice_type in config.DICE_TYPES:
-            dice_roll_counts[dice_type][roll_result] += 1  # ✅ Matches updated structure
+            dice_roll_counts[dice_type][roll_result] += 1
+            print(f"🎲 {player} rolled a {roll_result} on a {dice_type} for a {context}.")
 
     elif event_type == "encounter":
         monster_type = event.get("monster_type")
+        location = event.get("location")
         if monster_type in config.MONSTERS:
-            encounter_counts[monster_type] += 1  # ✅ Matches updated structure
+            encounter_counts[monster_type] += 1
+            print(f"⚔️ {player} encountered a {monster_type} in the {location}!")
 
     elif event_type == "spell_cast":
         spell_name = event.get("spell_name")
+        target = event.get("target")
+        effect = event.get("effect")
         if spell_name in config.SPELLS:
-            spell_cast_counts[spell_name] += 1  # ✅ Matches updated structure
+            spell_cast_counts[spell_name] += 1
+            if target == "enemy" and effect in ["damage", "debuff"]:
+                print(f"✨ {player} cast {spell_name} on an enemy, causing {effect}.")
+            elif target == "ally" and effect in ["heal", "buff"]:
+                print(f"🛡️ {player} cast {spell_name} on an ally, providing {effect}.")
+            elif target == "self" and effect in ["buff", "heal"]:
+                print(f"🔮 {player} cast {spell_name} on themselves, gaining {effect}.")
 
     # Store recent events
     recent_events.append(event)
@@ -80,7 +92,6 @@ def process_message(message):
 # Define Consumer Function
 #####################################
 
-
 def consume_events():
     """
     Kafka Consumer that continuously reads messages from the topic.
@@ -89,7 +100,7 @@ def consume_events():
 
     # Load Kafka configurations
     kafka_server = config.get_kafka_broker_address()
-    topic = config.get_kafka_topic()  # Now retrieves "dnd_events"
+    topic = config.get_kafka_topic()
 
     # Initialize Kafka Consumer
     consumer = KafkaConsumer(
