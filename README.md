@@ -1,43 +1,100 @@
-# buzzline-05-landon
+# D&D Kafka Event Tracker
 
-This project demonstrates a simple streaming analytics pipeline that processes JSON messages, stores them in a SQLite database, and provides real-time insights with a live-updating bar chart. The example is built to be easily extended to other databases or more advanced visualization tools.
+A real-time **Dungeons & Dragons event tracking system** using Kafka to **stream, process, and visualize** game events such as **dice rolls, monster encounters, and spell casts**.
 
-After each message is inserted into the database, the consumer runs a SQL query to group the messages by category and cacluate the average sentiment. Then the results are used to update a bar chart, created by matplotlib, redrawing the chart with each update. 
-
-In this project, a producer generates streaming messages while two consumer options are available:
-1. **File-Based Consumer:** Reads messages from a dynamically updating file.
-2. **Real-Time Visualization Consumer:** Processes messages from the live file, aggregates average sentiment scores by category in a SQLite database, and updates a bar chart (implemented in `consumer_landon.py`).
-
----
-
-## VS Code Extensions
-
-To enhance your development experience, consider installing these VS Code extensions:
-- **Black Formatter** by Microsoft
-- **Markdown All in One** by Yu Zhang
-- **PowerShell** by Microsoft (for Windows)
-- **Pylance** by Microsoft
-- **Python** by Microsoft
-- **Python Debugger** by Microsoft
-- **Ruff** by Astral Software (Linter)
-- **SQLite Viewer** by Florian Klampfer
-- **WSL** by Microsoft (for Windows)
+## 🚀 Features
+- 🛠️ **Kafka-based event streaming**
+- 🎲 **Tracks dice rolls, encounters, and spells**
+- 📊 **Real-time visualization for players: Stravos and Wurs**
+- ⚡ **Scalable for multiple players**
 
 ---
 
-## Project Setup
+## 📥 Installation
 
-### Prerequisites
-- **Python 3.11** is required.
-- For those who wish to experiment with the Kafka-based consumer (provided for comparison), ensure you have a running instance of Kafka and Zookeeper. However, the real-time file-based consumer does not depend on Kafka.
+### **1️⃣ Clone the Repository**
+```sh
+git clone https://github.com/your-username/dnd-kafka-tracker.git
+cd dnd-kafka-tracker
+```
 
-### Virtual Environment and Dependencies
-1. Create and activate your virtual environment:
-   - **Windows:**
-     ```shell
-     .venv\Scripts\activate
-     ```
-   
-2. Install the required dependencies using `requirements.txt`:
-   ```shell
-   pip install -r requirements.txt
+### **2️⃣ Install Dependencies**
+```sh
+pip install -r requirements.txt
+```
+
+### **3️⃣ Start Kafka Broker and Zookeeper**
+Ensure Kafka and Zookeeper are running:
+```sh
+sh start-kafka.sh
+```
+
+### **4️⃣ Run the Producer**
+This script simulates game events and sends them to Kafka:
+```sh
+python dnd_producer.py
+```
+
+### **5️⃣ Run the Consumer**
+This script processes events and updates visualizations:
+```sh
+python dnd_consumer.py
+```
+
+---
+
+## ⚙️ Configuration
+
+Set up a `.env` file in the project root with your Kafka settings:
+```sh
+KAFKA_BROKER_ADDRESS=localhost:9092
+DND_TOPIC=dnd_events
+MESSAGE_INTERVAL_SECONDS=5
+```
+Alternatively, modify `utils_config.py` for custom configurations.
+
+---
+
+## 🎮 Usage
+
+Once both **producer** and **consumer** are running:
+- The **producer** generates and sends D&D game events.
+- The **consumer** processes events and updates a **live visualization**.
+
+Example Kafka event:
+```json
+{
+    "player": "Stravos",
+    "event_type": "dice_roll",
+    "roll_result": 18
+}
+```
+
+The visualization updates **every 5 messages** and displays **separate charts for Stravos and Wurs**.
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome! To contribute:
+1. **Fork** the repository.
+2. **Create a new branch**: `git checkout -b feature-branch`.
+3. **Make your changes and commit**: `git commit -m "Added new feature"`.
+4. **Push and create a Pull Request**.
+
+---
+
+## 📜 License
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🏆 Acknowledgments
+- **Apache Kafka** - For real-time event streaming.
+- **Matplotlib** - For visualizing game events.
+- **D&D Community** - For inspiring this project.
+
+---
+
+Happy adventuring and coding! 🎲🐉🚀
+

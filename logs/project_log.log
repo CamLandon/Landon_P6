@@ -4902,3 +4902,17 @@
 2025-02-27 11:38:24.613 | INFO     | utils.utils_logger:<module>:43 - Logging to file: logs\project_log.log
 2025-02-27 11:38:24.614 | INFO     | utils.utils_config:get_kafka_broker_address:50 - KAFKA_BROKER_ADDRESS: localhost:9092
 2025-02-27 11:38:24.615 | INFO     | utils.utils_config:get_kafka_topic:57 - DND_TOPIC: dnd_events
+2025-02-27 11:44:42.765 | INFO     | utils.utils_logger:<module>:43 - Logging to file: logs\project_log.log
+2025-02-27 11:44:42.767 | INFO     | utils.utils_config:get_kafka_broker_address:50 - KAFKA_BROKER_ADDRESS: localhost:9092
+2025-02-27 11:44:42.767 | INFO     | utils.utils_config:get_kafka_topic:57 - DND_TOPIC: dnd_events
+2025-02-27 11:44:42.768 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:64 - MESSAGE_INTERVAL_SECONDS: 2
+2025-02-27 11:44:45.946 | INFO     | utils.utils_logger:<module>:43 - Logging to file: logs\project_log.log
+2025-02-27 11:44:45.947 | INFO     | utils.utils_config:get_kafka_broker_address:50 - KAFKA_BROKER_ADDRESS: localhost:9092
+2025-02-27 11:44:45.947 | INFO     | utils.utils_config:get_kafka_topic:57 - DND_TOPIC: dnd_events
+2025-02-27 11:48:43.402 | INFO     | utils.utils_logger:<module>:43 - Logging to file: logs\project_log.log
+2025-02-27 11:48:43.405 | INFO     | utils.utils_config:get_kafka_broker_address:50 - KAFKA_BROKER_ADDRESS: localhost:9092
+2025-02-27 11:48:43.405 | INFO     | utils.utils_config:get_kafka_topic:57 - DND_TOPIC: dnd_events
+2025-02-27 11:48:43.406 | INFO     | utils.utils_config:get_message_interval_seconds_as_int:64 - MESSAGE_INTERVAL_SECONDS: 2
+2025-02-27 11:48:56.283 | INFO     | utils.utils_logger:<module>:43 - Logging to file: logs\project_log.log
+2025-02-27 11:48:56.287 | INFO     | utils.utils_config:get_kafka_broker_address:50 - KAFKA_BROKER_ADDRESS: localhost:9092
+2025-02-27 11:48:56.287 | INFO     | utils.utils_config:get_kafka_topic:57 - DND_TOPIC: dnd_events
