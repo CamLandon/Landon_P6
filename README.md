@@ -12,44 +12,6 @@ The dnd_consumer.py script listens to the Kafka topic (dnd_events), processes in
 
 ⚡ Scalable for multiple players
 
-📥 Installation
-
-1️⃣ Clone the Repository
-
-git clone https://github.com/your-username/dnd-kafka-tracker.git
-cd dnd-kafka-tracker
-
-2️⃣ Install Dependencies
-
-pip install -r requirements.txt
-
-3️⃣ Start Kafka Broker and Zookeeper
-
-Ensure Kafka and Zookeeper are running:
-
-sh start-kafka.sh
-
-4️⃣ Run the Producer
-
-This script simulates game events and sends them to Kafka:
-
-python dnd_producer.py
-
-5️⃣ Run the Consumer
-
-This script processes events and updates visualizations:
-
-python dnd_consumer.py
-
-⚙️ Configuration
-
-Set up a .env file in the project root with your Kafka settings:
-
-KAFKA_BROKER_ADDRESS=localhost:9092
-DND_TOPIC=dnd_events
-MESSAGE_INTERVAL_SECONDS=5
-
-Alternatively, modify utils_config.py for custom configurations.
 
 🎮 Usage
 
