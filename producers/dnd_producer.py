@@ -3,7 +3,7 @@ dnd_producer.py
 
 Simulates Dungeons & Dragons game events and streams them as JSON messages to a Kafka topic.
 
-Example JSON message:
+Example message:
 {
     "timestamp": "2025-02-24T20:30:00Z",
     "player": "Stravos",
