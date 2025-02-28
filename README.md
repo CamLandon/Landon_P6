@@ -2,6 +2,8 @@
 
 The dnd_consumer.py script listens to the Kafka topic (dnd_events), processes incoming D&D game events, and updates real-time visualizations for tracked players. It categorizes events into dice rolls, encounters, and spell casts, maintaining a summary of each player's activity. The visualization refreshes every 5 messages, ensuring an up-to-date view of in-game events.
 
+---------
+
 🚀 Features
 
 🛠️ Kafka-based event streaming
@@ -12,6 +14,7 @@ The dnd_consumer.py script listens to the Kafka topic (dnd_events), processes in
 
 ⚡ Scalable for multiple players
 
+---------
 
 🎮 Usage
 
@@ -30,6 +33,8 @@ Example Kafka event:
 }
 
 The visualization updates every 5 messages and displays separate charts for Stravos and Wurs.
+
+---------
 
 🔍 Insights Gained from This Project
 
@@ -57,8 +62,12 @@ Designed a system that can easily extend to more players, new event types, or ad
 
 Proved Kafka's ability to handle continuous event ingestion for gaming analytics.
 
+---------
+
 🚀 Key Takeaway:
 
 This project demonstrates the power of Kafka for real-time event processing and how it can be used to track and analyze gameplay data dynamically. It also highlights the benefits of live visualization for better decision-making and in-game insights.
+
+---------
 
 Happy adventuring and coding! 🎲🐉🚀
